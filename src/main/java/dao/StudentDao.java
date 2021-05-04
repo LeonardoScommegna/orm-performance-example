@@ -150,6 +150,8 @@ public class StudentDao {
 		EntityManager em = emf.createEntityManager();
 
 		EntityTransaction tx = em.getTransaction();
+		em.unwrap(Session.class)
+        .setJdbcBatchSize(0);	
 		try {
 			tx.begin();
 			for (int i = 0; i < students.size(); i++) {
@@ -179,8 +181,8 @@ public class StudentDao {
 	public void persistStudentsBatch(List<Student> students) {
 		EntityManager em = emf.createEntityManager();
 		int batchSize = 25;
-		em.unwrap(Session.class)
-        .setJdbcBatchSize(batchSize);	
+//		em.unwrap(Session.class)
+//        .setJdbcBatchSize(batchSize);	
 
 		EntityTransaction tx = em.getTransaction();
 		try {

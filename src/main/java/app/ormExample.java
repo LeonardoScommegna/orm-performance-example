@@ -45,36 +45,57 @@ public class ormExample {
 //		examsTest(entityManagerFactory);
 //		fetchExam(entityManagerFactory);
 //		fetchAllExamDTO(entityManagerFactory);
-		
+
 		testBatchInsert(entityManagerFactory);
-		
+
 	}
-	
+
 	public static void testBatchInsert(EntityManagerFactory entityManagerFactory) {
 		StudentDao studentDao = new StudentDao(entityManagerFactory);
 
-		List<Student> newStudents =	generateListOfStudents(50);
-		studentDao.persistStudents(newStudents);
-		
-		// cleaning operations
-		deleteListOfStudents(newStudents, entityManagerFactory);
-	
+		List<Student> newStudents;
+
+		int iterations = 1000;
+//		int iterations = 1;
+		long startRetrieve;
+		long endRetrieve;
+		long timeRetrieve = 0;
+		for (int i = 0; i < iterations; i++) {
+
+			newStudents = generateListOfStudents(50);
+			startRetrieve = System.nanoTime();
+
+			// method execution
+			studentDao.persistStudents(newStudents);
+//			studentDao.persistStudentsBatch(newStudents);
+
+			endRetrieve = System.nanoTime();
+
+			timeRetrieve += endRetrieve - startRetrieve;
+
+			LOGGER.info("Partial Students insertion  took {} millis",
+					TimeUnit.NANOSECONDS.toMillis(endRetrieve - startRetrieve));
+			// cleaning operation
+			deleteListOfStudents(newStudents, entityManagerFactory);
+		}
+
+		LOGGER.info("students insertion  took {} millis",
+				TimeUnit.NANOSECONDS.toMillis(timeRetrieve / (long) iterations));
 	}
-	
-	
+
 	public static void deleteListOfStudents(List<Student> students, EntityManagerFactory entityManagerFactory) {
 		StudentDao studentDao = new StudentDao(entityManagerFactory);
-		for(Student student : students) {
+		for (Student student : students) {
 			studentDao.delete(student);
 		}
 	}
-	
+
 	public static List<Student> generateListOfStudents(int numOfStudents) {
 		List<Student> newStudents = new ArrayList<Student>();
-		
+
 		Random random = new Random();
 		Student student;
-		for(int i=0; i<numOfStudents; i++) {
+		for (int i = 0; i < numOfStudents; i++) {
 
 			student = new Student();
 			student.setFirstName("NewStudentFirstName" + i);
@@ -94,11 +115,10 @@ public class ormExample {
 			student.setProfilePic(profilePic);
 			newStudents.add(student);
 		}
-		
+
 		return newStudents;
 	}
 
-	
 	public static void fetchAllExamDTO(EntityManagerFactory em) {
 		LOGGER.info("Trying to retrieve all ExamInfo");
 		ExamDao examDao = new ExamDao(em);
@@ -147,8 +167,8 @@ public class ormExample {
 			course.setCfu(6);
 			course.setCourseCode("C" + i);
 			course.setSSD("SSD" + i);
-			course.setProfessor("Professor"+i);
-			
+			course.setProfessor("Professor" + i);
+
 			boolean success = courseDao.save(course);
 			if (success)
 				System.out.println("Inserito correttamente corso denominato: " + course.getTitle());

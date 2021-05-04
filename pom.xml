@@ -14,11 +14,9 @@
 		<!-- Dependecies versions -->
 		<log4j.version>2.14.1</log4j.version>
 		<hibernate.version>5.4.30.Final</hibernate.version>
-		<postgresql-driver.version>42.2.6</postgresql-driver.version>
-		<mysql-driver.version>8.0.17</mysql-driver.version>
+		<mysql-driver.version>8.0.24</mysql-driver.version>
 
 		<mysql-port>3306</mysql-port>
-		<postgres-port>5436</postgres-port>
 	</properties>
 
 	<dependencies>
@@ -36,12 +34,6 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
 		</dependency>
-
-		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-		</dependency>
-
 
 		<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
 		<dependency>
@@ -69,13 +61,6 @@
 				<groupId>org.hibernate</groupId>
 				<artifactId>hibernate-core</artifactId>
 				<version>${hibernate.version}</version>
-			</dependency>
-
-			<!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
-			<dependency>
-				<groupId>org.postgresql</groupId>
-				<artifactId>postgresql</artifactId>
-				<version>${postgresql-driver.version}</version>
 			</dependency>
 
 		</dependencies>
