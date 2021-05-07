@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
+import javax.persistence.Tuple;
 
 import domain.Exam;
 import dto.ExamInfoDTO;
@@ -44,10 +45,12 @@ public class ExamDao {
 		return em.find(Exam.class, id);
 	}
 
+	// TODO rimetti senza join fetch
+	
 	public List<Exam> findAll() {
 		EntityManager em = emf.createEntityManager();
-		return em.createQuery("select e from Exam e join fetch e.course", Exam.class).getResultList();
-//		return em.createQuery("from Exam " + " ORDER BY id DESC", Exam.class).getResultList();
+//		return em.createQuery("select e from Exam e join fetch e.course", Exam.class).getResultList();
+		return em.createQuery("from Exam " + " ORDER BY id DESC", Exam.class).getResultList();
 	}
 	
 	
@@ -55,9 +58,14 @@ public class ExamDao {
 		EntityManager em = emf.createEntityManager();
 		return em.createQuery("select "
 				+ "new dto.ExamInfoDTO(c.title, e.grade) "
-//				+ "new it.unifi.ing.stlab.dto.ExamInfoDTO(c.title, e.grade) "
 				+ " from Exam e left join e.course c", ExamInfoDTO.class).getResultList();
-//		return em.createQuery("from Exam " + " ORDER BY id DESC", Exam.class).getResultList();
+	}
+	
+	
+	public List<Tuple> findAllReadOnlyTuple() {
+		EntityManager em = emf.createEntityManager();
+		return em.createQuery("select c.title, e.grade"
+				+ " from Exam e left join e.course c", Tuple.class).getResultList();
 	}
 
 	public boolean update(Exam entity) {

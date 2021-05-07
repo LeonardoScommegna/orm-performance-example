@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
 	version="2.0">
 
-	<persistence-unit name="MYSQL"
+	<persistence-unit name="MYSQL-batched"
 		transaction-type="RESOURCE_LOCAL">
 		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
@@ -12,9 +12,6 @@
 		<class>domain.Exam</class>
 
 		<properties>
-			<property
-				name="hibernate.schema_update.unique_constraint_strategy"
-				value="RECREATE_QUIETLY" />
 			<property name="javax.persistence.jdbc.driver"
 				value="com.mysql.cj.jdbc.Driver" />
 			<property name="javax.persistence.jdbc.url"
@@ -29,11 +26,37 @@
 				value="org.hibernate.dialect.MySQL8Dialect" />
 			<property name="hibernate.hbm2ddl.auto" value="update" />
 
-			<property name="hibernate.jdbc.batch_size" value="25" />
+			<property name="hibernate.jdbc.batch_size" value="50" />
 			<property name="hibernate.order_inserts" value="true" />
 			<property name="hibernate.order_updates" value="true" />
 			<property name="hibernate.jdbc.batch_versioned_data"
 				value="true" />
+		</properties>
+
+	</persistence-unit>
+	<persistence-unit name="MYSQL"
+		transaction-type="RESOURCE_LOCAL">
+		<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+		<class>domain.Course</class>
+		<class>domain.Student</class>
+		<class>domain.Exam</class>
+
+		<properties>
+			<property name="javax.persistence.jdbc.driver"
+				value="com.mysql.cj.jdbc.Driver" />
+			<property name="javax.persistence.jdbc.url"
+				value="jdbc:mysql://localhost:3306/mysql_db" />
+			<!-- <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/mysql_db?rewriteBatchedStatements=true&amp;profileSQL=true" 
+				/> -->
+			<property name="javax.persistence.jdbc.user"
+				value="mysql_user" />
+			<property name="javax.persistence.jdbc.password" value="pwd" />
+
+			<property name="hibernate.dialect"
+				value="org.hibernate.dialect.MySQL8Dialect" />
+			<property name="hibernate.hbm2ddl.auto" value="update" />
+
 		</properties>
 
 	</persistence-unit>

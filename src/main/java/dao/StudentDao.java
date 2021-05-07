@@ -6,8 +6,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 
-import org.hibernate.Session;
-
 import domain.Exam;
 import domain.Student;
 
@@ -150,17 +148,16 @@ public class StudentDao {
 		EntityManager em = emf.createEntityManager();
 
 		EntityTransaction tx = em.getTransaction();
-		em.unwrap(Session.class)
-        .setJdbcBatchSize(0);	
+//		em.unwrap(Session.class)
+//        .setJdbcBatchSize(0);	
+		int flushingTime = 5000;
 		try {
 			tx.begin();
 			for (int i = 0; i < students.size(); i++) {
-//		        if (i > 0 && i % batchSize == 0) {
-//		            entityTransaction.commit();
-//		            entityTransaction.begin();
-//		 
-//		            entityManager.clear();
-//		        }
+		        if (i > 0 && i % flushingTime == 0) {
+		            em.flush();
+		            em.clear();
+		        }
 
 				Student student = students.get(i);
 				em.persist(student);
@@ -180,7 +177,7 @@ public class StudentDao {
 
 	public void persistStudentsBatch(List<Student> students) {
 		EntityManager em = emf.createEntityManager();
-		int batchSize = 25;
+//		int flushingTime = 300;
 //		em.unwrap(Session.class)
 //        .setJdbcBatchSize(batchSize);	
 
@@ -188,13 +185,14 @@ public class StudentDao {
 		try {
 			tx.begin();
 			for (int i = 0; i < students.size(); i++) {
-		        if (i > 0 && i % batchSize == 0) {
-		            tx.commit();
-		            tx.begin();
-		            em.clear();
+//		        if (i > 0 && i % flushingTime == 0) {
+//		            tx.commit();
+//		            tx.begin();
+//		            em.clear();
+				
 //		            em.flush();
 //		            em.clear();
-		        }
+//		        }
 
 				Student student = students.get(i);
 				em.persist(student);

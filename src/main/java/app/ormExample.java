@@ -28,25 +28,34 @@ public class ormExample {
 
 		EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MYSQL");
 
-//		CourseDao courseDao = new CourseDao(entityManagerFactory);
+		EntityManagerFactory BatchedEntityManagerFactory = Persistence.createEntityManagerFactory("MYSQL-batched");
 
-//		Course course1 = new Course();
-//		course1.setTitle("course1");
-
-//		boolean succes = courseDao.save(course1);
-
-//		Course retrievedCourse = courseDao.findOne((long)1);
-//		System.out.println("titolo: " + retrievedCourse.getTitle());
-
-//		courseDao.delete(retrievedCourse);
-
+// 		Uncomment to populate your DB
 //		populateCoursesDB(entityManagerFactory, 100);
 //		populateStudDB(entityManagerFactory, 500, 18);
-//		examsTest(entityManagerFactory);
+
+//		Uncomment to measure find all exams with entities
+//		measureFindAllExams(entityManagerFactory);
+
+//		Uncomment to measure find all exams with a class-defined DTO
+//		measureFindAllExamsDTO(entityManagerFactory);
+		
+//		Uncomment to measure find all exams with a Tuple-defined DTO
+//		measureFindAllExamsDTOTuple(entityManagerFactory);
+		
+//		Uncomment this to measure a massive write operation with JDBC batching disable
+//		LOGGER.info("Bulk insert with no batch prosessing");
+//		testBatchInsert(entityManagerFactory);
+		
+//		Uncomment this to measure a massive write operation with JDBC batching enable
+//		LOGGER.info("Bulk insert with batch prosessing");
+//		testBatchInsert(BatchedEntityManagerFactory);
+
+		
+		
 //		fetchExam(entityManagerFactory);
 //		fetchAllExamDTO(entityManagerFactory);
 
-		testBatchInsert(entityManagerFactory);
 
 	}
 
@@ -55,14 +64,14 @@ public class ormExample {
 
 		List<Student> newStudents;
 
-		int iterations = 1000;
+		int iterations = 20;
 //		int iterations = 1;
 		long startRetrieve;
 		long endRetrieve;
 		long timeRetrieve = 0;
 		for (int i = 0; i < iterations; i++) {
 
-			newStudents = generateListOfStudents(50);
+			newStudents = generateListOfStudents(10000);
 			startRetrieve = System.nanoTime();
 
 			// method execution
@@ -71,10 +80,12 @@ public class ormExample {
 
 			endRetrieve = System.nanoTime();
 
-			timeRetrieve += endRetrieve - startRetrieve;
+			if (i != 0)
+				timeRetrieve += endRetrieve - startRetrieve;
 
 			LOGGER.info("Partial Students insertion  took {} millis",
 					TimeUnit.NANOSECONDS.toMillis(endRetrieve - startRetrieve));
+
 			// cleaning operation
 			deleteListOfStudents(newStudents, entityManagerFactory);
 		}
@@ -112,7 +123,8 @@ public class ormExample {
 
 			byte[] profilePic = new byte[600];
 			Arrays.fill(profilePic, (byte) 0);
-			student.setProfilePic(profilePic);
+//			student.setProfilePic(profilePic);
+
 			newStudents.add(student);
 		}
 
@@ -133,6 +145,75 @@ public class ormExample {
 		examDao.findAll();
 	}
 
+	public static void measureFindAllExams(EntityManagerFactory entityManagerFactory) {
+
+		LOGGER.info("All Exams Entities Retrieval Test");
+		ExamDao examDao = new ExamDao(entityManagerFactory);
+		List<Exam> exams;
+		int iterations = 1000;
+		long startRetrieve;
+		long endRetrieve;
+		long timeRetrieve = 0;
+		for (int i = 0; i < iterations; i++) {
+			startRetrieve = System.nanoTime();
+
+			// method execution
+			exams = examDao.findAll();
+
+			endRetrieve = System.nanoTime();
+			timeRetrieve += endRetrieve - startRetrieve;
+		}
+
+		LOGGER.info("All Exams Retrieval  took {} millis",
+				TimeUnit.NANOSECONDS.toMillis(timeRetrieve / (long) iterations));
+	}
+
+	public static void measureFindAllExamsDTO(EntityManagerFactory entityManagerFactory) {
+
+		LOGGER.info("All Exams DTO Retrieval Test");
+		ExamDao examDao = new ExamDao(entityManagerFactory);
+		List<Exam> exams;
+		int iterations = 1000;
+		long startRetrieve;
+		long endRetrieve;
+		long timeRetrieve = 0;
+		for (int i = 0; i < iterations; i++) {
+			startRetrieve = System.nanoTime();
+
+			// method execution
+			examDao.findAllReadOnly();
+
+			endRetrieve = System.nanoTime();
+			timeRetrieve += endRetrieve - startRetrieve;
+		}
+
+		LOGGER.info("All Exams Retrieval  took {} millis",
+				TimeUnit.NANOSECONDS.toMillis(timeRetrieve / (long) iterations));
+	}
+
+	public static void measureFindAllExamsDTOTuple(EntityManagerFactory entityManagerFactory) {
+
+		LOGGER.info("All Exams Tuple-DTO Retrieval Test");
+		ExamDao examDao = new ExamDao(entityManagerFactory);
+		List<Exam> exams;
+		int iterations = 1000;
+		long startRetrieve;
+		long endRetrieve;
+		long timeRetrieve = 0;
+		for (int i = 0; i < iterations; i++) {
+			startRetrieve = System.nanoTime();
+
+			// method execution
+			examDao.findAllReadOnlyTuple();
+
+			endRetrieve = System.nanoTime();
+			timeRetrieve += endRetrieve - startRetrieve;
+		}
+
+		LOGGER.info("All Exams Retrieval  took {} millis",
+				TimeUnit.NANOSECONDS.toMillis(timeRetrieve / (long) iterations));
+	}
+	
 	public static void examsTest(EntityManagerFactory entityManagerFactory) {
 
 		LOGGER.info("All Exams Retrieval Test");
@@ -146,8 +227,9 @@ public class ormExample {
 			startRetrieve = System.nanoTime();
 
 			// method execution
-			exams = examDao.findAll();
+//			exams = examDao.findAll();
 //			examDao.findAllReadOnly();
+			examDao.findAllReadOnlyTuple();
 
 			endRetrieve = System.nanoTime();
 			timeRetrieve += endRetrieve - startRetrieve;
@@ -209,10 +291,11 @@ public class ormExample {
 
 			student.setBirthDate(birthDay);
 
-			numOfExams = random.nextInt(maxExams);
 			byte[] profilePic = new byte[600];
 			Arrays.fill(profilePic, (byte) 0);
 			student.setProfilePic(profilePic);
+
+			numOfExams = random.nextInt(maxExams);
 
 			for (int j = 0; j < numOfExams; j++) {
 				courseindex = random.nextInt(totalCourses);
