@@ -18,8 +18,9 @@ password: `pwd`
 
 
 ## Domain Model
-![Class Diagram](img/orm-classdiag.pdf)
+commegna/orm-performance-example/blob/main/img/orm-classdiag.pdf" alt="Class Diagram">
 
+<img src=“./img/orm-classdiag.pdf”/>
 
 ## Populating DB
 To appreciate the results of some tests you may need an already populated database, to this end, you can call the helper methods in the ormExampleClass like this for example:
