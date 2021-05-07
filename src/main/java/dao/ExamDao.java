@@ -45,7 +45,6 @@ public class ExamDao {
 		return em.find(Exam.class, id);
 	}
 
-	// TODO rimetti senza join fetch
 	
 	public List<Exam> findAll() {
 		EntityManager em = emf.createEntityManager();

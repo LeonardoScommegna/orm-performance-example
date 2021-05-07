@@ -28,12 +28,15 @@ public class ormExample {
 
 		EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("MYSQL");
 
-		EntityManagerFactory BatchedEntityManagerFactory = Persistence.createEntityManagerFactory("MYSQL-batched");
 
 // 		Uncomment to populate your DB
 //		populateCoursesDB(entityManagerFactory, 100);
 //		populateStudDB(entityManagerFactory, 500, 18);
 
+//		Uncomment to verify if if there is the N+1 queries problem
+//		fetchExam(entityManagerFactory);
+		
+		
 //		Uncomment to measure find all exams with entities
 //		measureFindAllExams(entityManagerFactory);
 
@@ -48,13 +51,12 @@ public class ormExample {
 //		testBatchInsert(entityManagerFactory);
 		
 //		Uncomment this to measure a massive write operation with JDBC batching enable
+//		EntityManagerFactory BatchedEntityManagerFactory = Persistence.createEntityManagerFactory("MYSQL-batched");
 //		LOGGER.info("Bulk insert with batch prosessing");
 //		testBatchInsert(BatchedEntityManagerFactory);
 
 		
 		
-//		fetchExam(entityManagerFactory);
-//		fetchAllExamDTO(entityManagerFactory);
 
 
 	}
@@ -139,7 +141,7 @@ public class ormExample {
 	}
 
 	public static void fetchExam(EntityManagerFactory em) {
-		LOGGER.info("N+1 Queries Problem verification on Exam entity");
+		LOGGER.info("N+1 Queries Problem verification on Exam entities");
 		ExamDao examDao = new ExamDao(em);
 
 		examDao.findAll();
@@ -214,30 +216,6 @@ public class ormExample {
 				TimeUnit.NANOSECONDS.toMillis(timeRetrieve / (long) iterations));
 	}
 	
-	public static void examsTest(EntityManagerFactory entityManagerFactory) {
-
-		LOGGER.info("All Exams Retrieval Test");
-		ExamDao examDao = new ExamDao(entityManagerFactory);
-		List<Exam> exams;
-		int iterations = 1000;
-		long startRetrieve;
-		long endRetrieve;
-		long timeRetrieve = 0;
-		for (int i = 0; i < iterations; i++) {
-			startRetrieve = System.nanoTime();
-
-			// method execution
-//			exams = examDao.findAll();
-//			examDao.findAllReadOnly();
-			examDao.findAllReadOnlyTuple();
-
-			endRetrieve = System.nanoTime();
-			timeRetrieve += endRetrieve - startRetrieve;
-		}
-
-		LOGGER.info("All Exams Retrieval  took {} millis",
-				TimeUnit.NANOSECONDS.toMillis(timeRetrieve / (long) iterations));
-	}
 
 	public static void populateCoursesDB(EntityManagerFactory entityManagerFactory, int numOfCourses) {
 		CourseDao courseDao = new CourseDao(entityManagerFactory);
@@ -260,6 +238,7 @@ public class ormExample {
 		}
 	}
 
+	
 	public static void populateStudDB(EntityManagerFactory entityManagerFactory, int numOfStudends, int maxExams) {
 		StudentDao studentDao = new StudentDao(entityManagerFactory);
 		CourseDao coursedao = new CourseDao(entityManagerFactory);
@@ -321,6 +300,10 @@ public class ormExample {
 				System.out.println("inserimento non riuscito");
 		}
 
+		
+		
 	}
+	
+
 
 }
