@@ -18,7 +18,6 @@ password: `pwd`
 
 
 ## Domain Model
-commegna/orm-performance-example/blob/main/img/orm-classdiag.pdf" alt="Class Diagram">
 
 <img src=“./img/orm-classdiag.pdf”/>
 
