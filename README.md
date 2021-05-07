@@ -32,6 +32,7 @@ populateStudDB(emFactory, 500, 18)
 or you may want to use the `sql.dump` also present in the repository (it contains values close to those chosen in the snippet above)
 
 ## Some Results
+The results reported below were obtained with an i5-4440 CPU @ 3.10GHz
 
 Performance measures retrieving all exams with different strategies
 
