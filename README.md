@@ -17,7 +17,7 @@ You should also create a DB named `mysql_db` and a user with privileges on them 
 
 
 ## Domain Model
-![Class Diagram](img/orm-classdiag.pdf)
+![Class Diagram](img/orm-classdiag.png)
 
 ## Populating DB
 To appreciate the results of some tests you may need an already populated database, to this end, you can call the helper methods in the ormExampleClass like this for example:
