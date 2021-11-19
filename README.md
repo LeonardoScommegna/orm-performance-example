@@ -12,9 +12,8 @@ For this reason, it is not recommended to take inspiration from the project as a
 
 You should also create a DB named `mysql_db` and a user with privileges on them with the subsequent credentials: 
 
-name: `mysql_user`
-
-password: `pwd`
+* name: `mysql_user`
+* password: `pwd`
 
 
 ## Domain Model
